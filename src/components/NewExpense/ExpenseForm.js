@@ -14,8 +14,18 @@ const ExpenseForm = () => {
   function handleDateChange(event) {
     setEnteredDate(event.target.value);
   }
+  function handleSubmit(event) {
+    event.preventDefault();
+    const obj = {
+      title: enteredTitle,
+      amount: enteredAmount,
+      date: new Date(enteredDate),
+    };
+    console.log(obj);
+  }
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="new-expense__controls">
         <div className="new-expense__control">
           <label htmlFor="expenseTitle">Expense Title</label>
