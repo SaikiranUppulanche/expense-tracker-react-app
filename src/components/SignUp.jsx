@@ -1,30 +1,45 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useRef } from "react";
+import { authContext } from "../store/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [loader, setLoader] = useState(false);
+  const [login, setLogin] = useState(false);
+  const navigate = useNavigate();
+  const userAuthCtx = useContext(authContext);
+
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const confirmPasswordRef = useRef();
+
+  const switchLoginHandler = () => {
+    setLogin((prevState) => !prevState);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputRef.current.value;
-    const confirmPassword = confirmPasswordRef.current.value;
+    const confirmPassword = !login && confirmPasswordRef.current.value;
     setLoader(true);
+    let url;
     if (
-      enteredPassword !== confirmPassword ||
-      enteredEmail.indexOf("@") === -1 ||
-      enteredPassword.length < 8
+      !login &&
+      (enteredPassword !== confirmPassword || enteredPassword.length < 8)
     ) {
-      return <p>Please enter valid credentials</p>;
-    }
-
-    fetch(
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA0K8p5KNVmMPUTOloxQXJ7omcZKn36EvI",
-      {
+      setLoader(false);
+      return alert("Please enter correct password");
+    } else {
+      if (login) {
+        url =
+          "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA0K8p5KNVmMPUTOloxQXJ7omcZKn36EvI";
+      } else {
+        url =
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA0K8p5KNVmMPUTOloxQXJ7omcZKn36EvI";
+      }
+      fetch(url, {
         method: "POST",
         body: JSON.stringify({
           email: enteredEmail,
@@ -34,26 +49,42 @@ const SignUp = () => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
-    )
-      .then((res) => {
-        setLoader(false);
-        if (res.ok) {
-          console.log("User has successfully signed up");
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMsg = "Authentication Failed";
-            if (data && data.error && data.error.message) {
-              errorMsg = data.error.message;
-            }
-            throw new Error(errorMsg);
-          });
-        }
       })
-      .catch((err) => {
-        alert(err.message);
-      });
+        .then((res) => {
+          setLoader(false);
+          if (res.ok) {
+            console.log("User has successfully signed up");
+            return res.json();
+          } else {
+            return res.json().then((data) => {
+              let errorMsg = "Authentication Failed";
+              if (data && data.error && data.error.message) {
+                errorMsg = data.error.message;
+              }
+              throw new Error(errorMsg);
+            });
+          }
+        })
+        .then((data) => {
+          userAuthCtx.login(data.idToken);
+          navigate("/welcome");
+        })
+        .catch((err) => {
+          alert(err.message);
+          setLoader(false);
+        });
+    }
+    if (login) {
+      emailInputRef.current.value = "";
+
+      passwordInputRef.current.value = "";
+    } else {
+      emailInputRef.current.value = "";
+
+      passwordInputRef.current.value = "";
+
+      confirmPasswordRef.current.value = "";
+    }
   };
 
   return (
@@ -62,7 +93,7 @@ const SignUp = () => {
         onSubmit={handleSubmit}
         className="p-2 w-1/2 flex max-w-sm flex-col items-center border-2 "
       >
-        <h3 className="text-3xl p-5">Sign Up</h3>
+        <h3 className="text-3xl p-5">{login ? "Login" : "Sign Up"}</h3>
         <input
           className="w-8/12 h-9 p-4 m-2 border-2 rounded-md"
           type="email"
@@ -75,26 +106,33 @@ const SignUp = () => {
           placeholder="Password"
           ref={passwordInputRef}
         />
-        <input
-          className="w-8/12 h-9 p-4 m-2 border-2 rounded-md"
-          type="password"
-          placeholder="Confirm Password"
-          ref={confirmPasswordRef}
-        />
+        {!login && (
+          <input
+            className="w-8/12 h-9 p-4 m-2 border-2 rounded-md"
+            type="password"
+            placeholder="Confirm Password"
+            ref={confirmPasswordRef}
+          />
+        )}
 
         <button
-          className="bg-sky-500 text-white w-8/12 h-10 rounded-full my-8"
+          className="bg-sky-500 text-white w-8/12 h-10 rounded-full mt-8 mb-4"
           type="submit"
         >
-          {loader ? "Signing Up..." : "Sign Up"}
+          {login ? "Login" : "Sign Up"}
+          {!login && loader && "Signing Up..."}
+        </button>
+        <button className=" text-blue-500 underline">
+          {login && <a href="">Forget Password</a>}
         </button>
       </form>
 
       <button
+        onClick={switchLoginHandler}
         className=" border mt-4 border-slate-700 bg-sky-100 rounded-md py-4 px-10"
         type="button"
       >
-        Have an Account? Login
+        {login ? "Don't have an account? Sign Up" : " Have an Account? Login"}
       </button>
     </div>
   );
