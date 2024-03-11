@@ -1,6 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./components/SignUp";
 import WelcomePage from "./components/WelcomePage";
+import ProfileForm from "./components/ProfileForm";
 
 const router = createBrowserRouter([
   {
@@ -10,6 +11,10 @@ const router = createBrowserRouter([
   {
     path: "/welcome",
     element: <WelcomePage />,
+  },
+  {
+    path: "/profile",
+    element: <ProfileForm />,
   },
 ]);
 
