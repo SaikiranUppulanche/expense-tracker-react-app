@@ -53,7 +53,6 @@ const SignUp = () => {
         .then((res) => {
           setLoader(false);
           if (res.ok) {
-            console.log("User has successfully signed up");
             return res.json();
           } else {
             return res.json().then((data) => {
@@ -66,7 +65,9 @@ const SignUp = () => {
           }
         })
         .then((data) => {
-          userAuthCtx.login(data.idToken);
+          userAuthCtx.login(data.idToken, enteredEmail);
+          localStorage.setItem("token", data.idToken);
+          localStorage.setItem("email", enteredEmail);
           navigate("/welcome");
         })
         .catch((err) => {
@@ -119,7 +120,7 @@ const SignUp = () => {
           className="bg-sky-500 text-white w-8/12 h-10 rounded-full mt-8 mb-4"
           type="submit"
         >
-          {login ? "Login" : "Sign Up"}
+          {login && !loader ? "Login" : "Sign Up"}
           {!login && loader && "Signing Up..."}
         </button>
         <button className=" text-blue-500 underline">

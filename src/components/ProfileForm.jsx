@@ -1,33 +1,67 @@
-import { useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import WelcomePage from "./WelcomePage";
+import { authContext } from "../store/AuthContext";
 
 const ProfileForm = () => {
   const nameInputRef = useRef();
   const urlInputRef = useRef();
 
+  const userCtx = useContext(authContext);
+  const login = userCtx.isLoggedIn;
+  const token = userCtx.authToken;
+
+  useEffect(() => {
+    if (login) {
+      const fetchData = async () => {
+        const res = await fetch(
+          "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyA0K8p5KNVmMPUTOloxQXJ7omcZKn36EvI",
+          {
+            method: "POST",
+            body: JSON.stringify({ idToken: token }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!res.ok) {
+          return alert("Can't fetch user data");
+        } else {
+          const data = await res.json();
+
+          nameInputRef.current.value = data.users[0].displayName;
+          urlInputRef.current.value = data.users[0].photoUrl;
+        }
+      };
+      fetchData();
+    }
+  }, [token, login]);
+
   const handleProfileDetails = async (e) => {
     e.preventDefault();
+
     const name = nameInputRef.current.value;
     const url = urlInputRef.current.value;
 
-    const profile = {
-      name,
-      url,
-    };
-
     const res = await fetch(
-      "https://react-auth-3257e-default-rtdb.firebaseio.com//userProfile.json",
+      "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyA0K8p5KNVmMPUTOloxQXJ7omcZKn36EvI",
       {
         method: "POST",
-        body: JSON.stringify(profile),
+        body: JSON.stringify({
+          idToken: token,
+          displayName: name,
+          photoUrl: url,
+          returnSecureToken: true,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
     if (!res.ok) return;
-    nameInputRef.current.value = "";
-    urlInputRef.current.value = "";
+    else {
+      const data = await res.json();
+      console.log(data);
+    }
   };
 
   return (
