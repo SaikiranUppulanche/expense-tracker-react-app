@@ -66,8 +66,7 @@ const SignUp = () => {
         })
         .then((data) => {
           userAuthCtx.login(data.idToken, enteredEmail);
-          localStorage.setItem("token", data.idToken);
-          localStorage.setItem("email", enteredEmail);
+
           navigate("/welcome");
         })
         .catch((err) => {
@@ -120,8 +119,8 @@ const SignUp = () => {
           className="bg-sky-500 text-white w-8/12 h-10 rounded-full mt-8 mb-4"
           type="submit"
         >
-          {login && !loader ? "Login" : "Sign Up"}
-          {!login && loader && "Signing Up..."}
+          {login ? "Login" : "Sign Up"}
+          {loader && ""}
         </button>
         <button className=" text-blue-500 underline">
           {login && <a href="">Forget Password</a>}

@@ -1,40 +1,41 @@
-import { useContext, useEffect, useRef } from "react";
-import WelcomePage from "./WelcomePage";
-import { authContext } from "../store/AuthContext";
+import { useEffect, useRef } from "react";
+import WelcomePage from "./Welcome";
+// import { authContext } from "../store/AuthContext";
 
 const ProfileForm = () => {
   const nameInputRef = useRef();
   const urlInputRef = useRef();
 
-  const userCtx = useContext(authContext);
-  const login = userCtx.isLoggedIn;
-  const token = userCtx.authToken;
+  //   const userCtx = useContext(authContext);
+  //   const email = userCtx.email;
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (login) {
-      const fetchData = async () => {
-        const res = await fetch(
-          "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyA0K8p5KNVmMPUTOloxQXJ7omcZKn36EvI",
-          {
-            method: "POST",
-            body: JSON.stringify({ idToken: token }),
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!res.ok) {
-          return alert("Can't fetch user data");
-        } else {
-          const data = await res.json();
-
+    const fetchData = async () => {
+      const res = await fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyA0K8p5KNVmMPUTOloxQXJ7omcZKn36EvI",
+        {
+          method: "POST",
+          body: JSON.stringify({ idToken: token }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!res.ok) {
+        return alert("Can't fetch user data");
+      } else {
+        const data = await res.json();
+        if (data.users[0].displayName && data.users[0].photoUrl) {
           nameInputRef.current.value = data.users[0].displayName;
           urlInputRef.current.value = data.users[0].photoUrl;
+        } else {
+          return;
         }
-      };
-      fetchData();
-    }
-  }, [token, login]);
+      }
+    };
+    fetchData();
+  }, [token]);
 
   const handleProfileDetails = async (e) => {
     e.preventDefault();

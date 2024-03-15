@@ -1,7 +1,8 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignUp from "./components/SignUp";
-import WelcomePage from "./components/WelcomePage";
+
 import ProfileForm from "./components/ProfileForm";
+import WelcomePage from "./pages/WelcomePage";
 
 const router = createBrowserRouter([
   {

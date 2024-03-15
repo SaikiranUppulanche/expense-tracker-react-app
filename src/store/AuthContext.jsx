@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 
-export const authContext = React.createContext({
+const emailChanger = (str) => {
+  let updatedStr = "";
+  for (let s of str) {
+    if (s === "@" || s === ".") continue;
+    updatedStr += s;
+  }
+  return updatedStr;
+};
+
+const authContext = React.createContext({
   authToken: "",
   email: "",
   isLoggedIn: null,
@@ -17,10 +26,14 @@ const AuthContextProvider = (props) => {
   const isLoggedIn = !!token;
 
   const handleAddToken = (authToken, email) => {
+    const updatedEmail = emailChanger(email);
+
     setToken(authToken);
-    setEmail(email);
+    setEmail(updatedEmail);
+    localStorage.setItem("token", authToken);
+    localStorage.setItem("email", updatedEmail);
     <Navigate to="/welcome" replace={true} />;
-    console.log(token, "login successfull");
+    // console.log(token, "login successfull");
   };
 
   const context = {
@@ -37,4 +50,5 @@ const AuthContextProvider = (props) => {
   );
 };
 
+export { authContext };
 export default AuthContextProvider;
