@@ -11,7 +11,6 @@ const Welcome = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    console.log("logout working");
     authCtx.logout();
     navigate("/");
   };

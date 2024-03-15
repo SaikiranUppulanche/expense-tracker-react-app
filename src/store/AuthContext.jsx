@@ -38,8 +38,6 @@ const AuthContextProvider = (props) => {
   };
 
   const handleDeleteToken = () => {
-    console.log("logout working");
-
     localStorage.removeItem("token");
     localStorage.removeItem("email");
   };

@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { useRef } from "react";
 import { authContext } from "../store/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignUp = () => {
   const [loader, setLoader] = useState(false);
@@ -123,7 +123,7 @@ const SignUp = () => {
           {loader && ""}
         </button>
         <button className=" text-blue-500 underline">
-          {login && <a href="">Forget Password</a>}
+          {login && <Link to="/forget-password">Forget Password</Link>}
         </button>
       </form>
 
