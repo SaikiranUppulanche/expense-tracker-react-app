@@ -15,6 +15,7 @@ const authContext = React.createContext({
   email: "",
   isLoggedIn: null,
   login: () => {},
+  logout: () => {},
 });
 
 const AuthContextProvider = (props) => {
@@ -36,11 +37,19 @@ const AuthContextProvider = (props) => {
     // console.log(token, "login successfull");
   };
 
+  const handleDeleteToken = () => {
+    console.log("logout working");
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+  };
+
   const context = {
     authToken: token,
     email: email,
     isLoggedIn,
     login: handleAddToken,
+    logout: handleDeleteToken,
   };
 
   return (

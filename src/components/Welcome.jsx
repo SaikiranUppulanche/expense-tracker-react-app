@@ -1,9 +1,21 @@
 // import { useContext } from "react";
 
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { authContext } from "../store/AuthContext";
 // import { authContext } from "../store/AuthContext";
 
 const Welcome = () => {
+  const authCtx = useContext(authContext);
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    console.log("logout working");
+    authCtx.logout();
+    navigate("/");
+  };
+
   return (
     <>
       <div className="flex flex-row m-5 p-5 bg-slate-200 justify-between rounded-xl ">
@@ -14,6 +26,12 @@ const Welcome = () => {
             <Link to="/profile">Complete Now</Link>
           </span>{" "}
         </span>
+        <button
+          onClick={handleLogout}
+          className="px-3 bg-red-600 rounded text-stone-50 font-semibold"
+        >
+          Log Out
+        </button>
       </div>
     </>
   );
