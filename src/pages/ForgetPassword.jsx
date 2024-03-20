@@ -25,14 +25,17 @@ const ForgetPassword = () => {
         }
       );
       const data = await res.json();
-      setLoading(false);
+
       if (!res.ok) {
         let errorMessage = data.error.message;
         throw new Error(errorMessage);
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       alert(error.message);
     }
+    alert("Reset Link has been sent to your email address");
   };
   return (
     <div className=" h-screen flex flex-col justify-center items-center ">

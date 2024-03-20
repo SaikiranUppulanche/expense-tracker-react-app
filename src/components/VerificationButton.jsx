@@ -31,10 +31,10 @@ const VerificationButton = () => {
       });
   };
   return (
-    <div className="flex w-1/2 justify-center m-5 p-5 bg-slate-400 rounded-xl">
+    <div className="flex flex-row justify-center align-middle m-5">
       <button
         onClick={handleVerification}
-        className="p-3 bg-red-600 rounded text-stone-50 font-semibold"
+        className="p-3 bg-red-600 rounded text-stone-50 font-semibold "
       >
         Verify Email
       </button>
