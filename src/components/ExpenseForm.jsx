@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 const ExpenseForm = (props) => {
   const expenseRef = useRef();
   const descriptionRef = useRef();
-  const [selectValue, setSelectValue] = useState("");
+  const [selectValue, setSelectValue] = useState("Food");
 
   const hanldeSelectChange = (e) => {
     setSelectValue(e.target.value);
